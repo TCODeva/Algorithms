@@ -12,5 +12,6 @@ double pow(double a, int n) {
        while(n) {
            if(n%2 == 1) ret *= a;
            a *= a; n /= 2;
+       }
+       return ret; 
 }
-return ret; }
