@@ -55,16 +55,19 @@
  * It is straightforward to write the O(n) time and O(n) space solution, based on the two equations above. However, if you notice that the maximum profits on the i-th day actually only depend on those on the (i-1)-th day, the space can be cut down to O(1). Here is the space-optimized solution:
  */
  
- public int maxProfit(int[] prices) {
-    int T_i10 = 0, T_i11 = Integer.MIN_VALUE;
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int T_i10 = 0, T_i11 = INT_MIN;
         
-    for (int price : prices) {
-        T_i10 = Math.max(T_i10, T_i11 + price);
-        T_i11 = Math.max(T_i11, -price);
+        for (int i = 0; i < prices.size(); i++) {
+            T_i10 = max(T_i10, T_i11 + prices[i]);
+            T_i11 = max(T_i11, -prices[i]);
+        }
+        
+        return T_i10;
     }
-        
-    return T_i10;
-}
+};
 
 /* Now let's try to gain some insight of the solution above. If we examine the part inside the loop more carefully, T_i11 really just represents the maximum value of the negative of all stock prices up to the i-th day, or equivalently the minimum value of all the stock prices. As for T_i10, we just need to decide which action yields a higher profit, sell or rest. And if action sell is taken, the price at which we bought the stock is T_i11, i.e., the minimum value before the i-th day. This is exactly what we would do in reality if we want to gain maximum profit. I should point out that this is not the only way of solving the problem for this case. You may find some other nice solutions here.
  * 
@@ -79,17 +82,20 @@
  * where we have taken advantage of the fact that T[i-1][k-1][0] = T[i-1][k][0] for the second equation. The O(n) time and O(1) space solution is as follows:
  */
  
-public int maxProfit(int[] prices) {
-    int T_ik0 = 0, T_ik1 = Integer.MIN_VALUE;
-    
-    for (int price : prices) {
-        int T_ik0_old = T_ik0;
-        T_ik0 = Math.max(T_ik0, T_ik1 + price);
-        T_ik1 = Math.max(T_ik1, T_ik0_old - price);
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int T_ik0 = 0, T_ik1 = INT_MIN;
+        
+        for (int i = 0; i < prices.size(); i++) {
+            int T_ik0_old = T_ik0;
+            T_ik0 = max(T_ik0, T_ik1 + prices[i]);
+            T_ik1 = max(T_ik1, T_ik0_old - prices[i]);
+        }
+        
+        return T_ik0;
     }
-    
-    return T_ik0;
-}
+};
 
 /* (Note: The caching of the old values of T_ik0, that is, the variable T_ik0_old, is unnecessary. Special thanks to 0x0101 and elvina for clarifying this.)
  * 
@@ -108,18 +114,21 @@ public int maxProfit(int[] prices) {
  * where again we have taken advantage of the base caseT[i][0][0] = 0 for the last equation. The O(n) time and O(1) space solution is as follows:
  */
  
-public int maxProfit(int[] prices) {
-    int T_i10 = 0, T_i11 = Integer.MIN_VALUE, T_i20 = 0, T_i21 = Integer.MIN_VALUE;
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int T_i10 = 0, T_i11 = INT_MIN, T_i20 = 0, T_i21 = INT_MIN;
         
-    for (int price : prices) {
-        T_i20 = Math.max(T_i20, T_i21 + price);
-        T_i21 = Math.max(T_i21, T_i10 - price);
-        T_i10 = Math.max(T_i10, T_i11 + price);
-        T_i11 = Math.max(T_i11, -price);
+        for (int i = 0; i < prices.size(); i++) {
+            T_i20 = max(T_i20, T_i21 + prices[i]);
+            T_i21 = max(T_i21, T_i10 - prices[i]);
+            T_i10 = max(T_i10, T_i11 + prices[i]);
+            T_i11 = max(T_i11, -prices[i]);
+        }
+
+        return T_i20;
     }
-        
-    return T_i20;
-}
+};
 
 /* which is essentially the same as the one given here.
  * 
@@ -133,32 +142,34 @@ public int maxProfit(int[] prices) {
  * The following is the O(kn) time and O(k) space solution. Without the optimization, the code will be met with TLE for large k values.
  */
  
-public int maxProfit(int k, int[] prices) {
-    if (k >= prices.length >>> 1) {
-        int T_ik0 = 0, T_ik1 = Integer.MIN_VALUE;
-    
-        for (int price : prices) {
-            int T_ik0_old = T_ik0;
-            T_ik0 = Math.max(T_ik0, T_ik1 + price);
-            T_ik1 = Math.max(T_ik1, T_ik0_old - price);
+class Solution {
+public:
+    int maxProfit(int k, vector<int>& prices) {
+        if (k >= prices.size() * 2) {
+            int T_ik0 = 0, T_ik1 = INT_MIN;
+
+            for (int i = 0; i < prices.size(); i++) {
+                int T_ik0_old = T_ik0;
+                T_ik0 = max(T_ik0, T_ik1 + prices[i]);
+                T_ik1 = max(T_ik1, T_ik0_old - prices[i]);
+            }
+       
+            return T_ik0;
         }
-        
-        return T_ik0;
-    }
-        
-    int[] T_ik0 = new int[k + 1];
-    int[] T_ik1 = new int[k + 1];
-    Arrays.fill(T_ik1, Integer.MIN_VALUE);
-        
-    for (int price : prices) {
-        for (int j = k; j > 0; j--) {
-            T_ik0[j] = Math.max(T_ik0[j], T_ik1[j] + price);
-            T_ik1[j] = Math.max(T_ik1[j], T_ik0[j - 1] - price);
+
+        vector<int> T_ik0(k+1, 0);
+        vector<int> T_ik1(k+1, INT_MIN);
+
+        for (int i = 0; i < prices.size(); i++) {
+            for (int j = k; j > 0; j--) {
+                T_ik0[j] = max(T_ik0[j], T_ik1[j] + prices[i]);
+                T_ik1[j] = max(T_ik1[j], T_ik0[j - 1] - prices[i]);
+            }
         }
+
+        return T_ik0[k];
     }
-        
-    return T_ik0[k];
-}
+};
 
 /* The solution is similar to the one found in this post. Here I used backward looping for the T array to avoid using temporary variables. It turns out that it is possible to do forward looping without temporary variables, too.
  * 
@@ -178,18 +189,21 @@ public int maxProfit(int k, int[] prices) {
  * And here is the O(n) time and O(1) space solution:
  */
  
-public int maxProfit(int[] prices) {
-    int T_ik0_pre = 0, T_ik0 = 0, T_ik1 = Integer.MIN_VALUE;
-    
-    for (int price : prices) {
-        int T_ik0_old = T_ik0;
-        T_ik0 = Math.max(T_ik0, T_ik1 + price);
-        T_ik1 = Math.max(T_ik1, T_ik0_pre - price);
-        T_ik0_pre = T_ik0_old;
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int T_ik0_pre = 0, T_ik0 = 0, T_ik1 = INT_MIN;
+        
+        for (int i = 0; i < prices.size(); i++) {
+            int T_ik0_old = T_ik0;
+            T_ik0 = max(T_ik0, T_ik1 + prices[i]);
+            T_ik1 = max(T_ik1, T_ik0_pre - prices[i]);
+            T_ik0_pre = T_ik0_old;
+        }
+        
+        return T_ik0;
     }
-    
-    return T_ik0;
-}
+};
 
 /* dietpepsi shared a very nice solution here with thinking process, which turns out to be the same as the one above.
  * 
@@ -216,31 +230,37 @@ public int maxProfit(int[] prices) {
  * Solution I -- pay the fee when buying the stock:
  */
  
-public int maxProfit(int[] prices, int fee) {
-    int T_ik0 = 0, T_ik1 = Integer.MIN_VALUE;
+class Solution {
+public:
+    int maxProfit(vector<int>& prices, int fee) {
+        int T_ik0 = 0, T_ik1 = INT_MIN;
     
-    for (int price : prices) {
-        int T_ik0_old = T_ik0;
-        T_ik0 = Math.max(T_ik0, T_ik1 + price);
-        T_ik1 = Math.max(T_ik1, T_ik0_old - price - fee);
+        for (int i = 0; i < prices.size(); i++) {
+            int T_ik0_old = T_ik0;
+            T_ik0 = max(T_ik0, T_ik1 + prices[i]);
+            T_ik1 = max(T_ik1, T_ik0_old - prices[i] - fee);
+        }
+
+        return T_ik0;
     }
-        
-    return T_ik0;
-}
+};
 
 //Solution II -- pay the fee when selling the stock:
 
-public int maxProfit(int[] prices, int fee) {
-    long T_ik0 = 0, T_ik1 = Integer.MIN_VALUE;
+class Solution {
+public:
+    int maxProfit(vector<int>& prices, int fee) {
+        long T_ik0 = 0, T_ik1 = INT_MIN;
     
-    for (int price : prices) {
-        long T_ik0_old = T_ik0;
-        T_ik0 = Math.max(T_ik0, T_ik1 + price - fee);
-        T_ik1 = Math.max(T_ik1, T_ik0_old - price);
+        for (int i = 0; i < prices.size(); i++) {
+            long T_ik0_old = T_ik0;
+            T_ik0 = max(T_ik0, T_ik1 + prices[i] - fee);
+            T_ik1 = max(T_ik1, T_ik0_old - prices[i]);
+        }
+
+        return (int)T_ik0;
     }
-        
-    return (int)T_ik0;
-}
+};
 
 /* III -- Summary
  * 
