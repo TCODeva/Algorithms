@@ -73,11 +73,8 @@ public:
             for (int j = i; j < n; j++) {
                 if (i == j)
                     dp[i][j] = nums[i];
-                else {
-                    int hSum = nums[i] - dp[i + 1][j];
-                    int tSum = nums[j] - dp[i][j - 1];
-                    dp[i][j] = max(hSum, tSum);
-                }
+                else 
+                    dp[i][j] = max(nums[i] - dp[i + 1][j], nums[j] - dp[i][j - 1]);
             }
         }
         return dp[0][n - 1] >= 0;
@@ -93,11 +90,10 @@ public:
         vector<int> dp(n, 0);
         for (int i = n - 1; i >= 0; i--) {
             for (int j = i; j < n; j++) {
-                if (i == j) {
+                if (i == j)
                     dp[i] = nums[i];
-                } else {
+                else
                     dp[j] = max(nums[i] - dp[j], nums[j] - dp[j - 1]);
-                }
             }
         }
         return dp[n - 1] >= 0;
