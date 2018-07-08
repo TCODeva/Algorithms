@@ -39,3 +39,67 @@ private:
     }
 };
 
+No-turn Minimax with Memorization:
+
+class Solution {
+public:
+    bool PredictTheWinner(vector<int>& nums) {
+        int n = nums.size();
+        vector<vector<int>> memo(n, vector<int>(n, INT_MIN));
+        return helper(nums, 0, n-1, memo) >= 0;
+    }
+    
+private:
+    int helper(vector<int>& nums, int head, int tail, vector<vector<int>>& memo) {
+        if (head == tail) 
+            return nums[head];
+        if (memo[head][tail] != INT_MIN)
+            return memo[head][tail];
+        int hSum = nums[head] - helper(nums, head+1, tail, memo);
+        int tSum = nums[tail] - helper(nums, head, tail-1, memo);
+        memo[head][tail] = max(hSum, tSum);
+        return memo[head][tail];
+    }
+};
+
+2-D DP:
+
+class Solution {
+public:
+    bool PredictTheWinner(vector<int>& nums) {
+        int n = nums.size();
+        vector<vector<int>> dp(n, vector<int>(n, 0));
+        for (int i = n-1; i >= 0; i--) {
+            for (int j = i; j < n; j++) {
+                if (i == j)
+                    dp[i][j] = nums[i];
+                else {
+                    int hSum = nums[i] - dp[i + 1][j];
+                    int tSum = nums[j] - dp[i][j - 1];
+                    dp[i][j] = max(hSum, tSum);
+                }
+            }
+        }
+        return dp[0][n - 1] >= 0;
+    }
+};
+
+1-D DP:
+
+class Solution {
+public:
+    bool PredictTheWinner(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> dp(n, 0);
+        for (int i = n - 1; i >= 0; i--) {
+            for (int j = i; j < n; j++) {
+                if (i == j) {
+                    dp[i] = nums[i];
+                } else {
+                    dp[j] = max(nums[i] - dp[j], nums[j] - dp[j - 1]);
+                }
+            }
+        }
+        return dp[n - 1] >= 0;
+    }
+};
