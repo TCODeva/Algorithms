@@ -27,21 +27,23 @@
  * Answers will be accepted as correct if they are within 10^-5 of the correct answer.
  * The judging time limit has been reduced for this question.
  */
+
+/* dp[i]: probability of get points i
+ * dp[i] = sum(last W dp values) / W
+ */
  
 class Solution {
 public:
     double new21Game(int N, int K, int W) {
-        vector<double> dp(N + W + 1);
-        // dp[x] = the answer when Alice has x points
-        for (int k = K; k <= N; ++k)
-            dp[k] = 1.0;
-
-        double S = min(N - K + 1, W);
-        // S = dp[k+1] + dp[k+2] + ... + dp[k+W]
-        for (int k = K - 1; k >= 0; --k) {
-            dp[k] = S / W;
-            S += dp[k] - dp[k + W];
+        if (K == 0 || N >= K + W) return 1.0;
+        vector<double> dp(N + 1);
+        dp[0] = 1.0;
+        double Wsum = 1.0, res = 0.0;
+        for (int i = 1; i <= N; ++i) {
+            dp[i] = Wsum / W;
+            if (i < K) Wsum += dp[i]; else res += dp[i];
+            if (i - W >= 0) Wsum -= dp[i - W];
         }
-        return dp[0];
+        return res;
     }
 };
