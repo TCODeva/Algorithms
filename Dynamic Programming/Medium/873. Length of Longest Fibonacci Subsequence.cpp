@@ -30,6 +30,8 @@
  * 1 <= A[0] < A[1] < ... < A[A.length - 1] <= 10^9
  * (The time limit has been reduced by 50% for submissions in Java, C, and C++.)
  */
+
+//dp[i][j] represents the length of longest sequence which ends with A[i] and A[j].
  
 class Solution {
 public:
