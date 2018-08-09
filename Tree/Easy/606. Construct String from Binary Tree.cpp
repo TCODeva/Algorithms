@@ -50,3 +50,30 @@ public:
     }
 };
 
+class Solution {
+public:
+    string tree2str(TreeNode* t) {
+        string s = "";
+        if(!t) return s;
+        set<TreeNode*> visited_node;
+        stack<TreeNode*> stack_node;
+        stack_node.push(t);
+        while (!stack_node.empty()) {
+            t = stack_node.top();
+            if (visited_node.find(t) == visited_node.end()) {
+                s += "(" + to_string(t->val);
+                visited_node.insert(t);
+                if (t->right) stack_node.push(t->right);
+                if (t->left) stack_node.push(t->left);
+                if (!t->left && t->right) s += "()";
+            } else {
+                s += ")";
+                stack_node.pop();
+            }
+        }
+        //s.erase(s.begin() + 0);
+        //s.erase(s.end() - 1);
+        //return s;
+        return s.substr(1, s.size() - 2);
+    }
+};
