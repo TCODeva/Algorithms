@@ -23,6 +23,9 @@
  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
  * };
  */
+
+//reverse in-order traversal:
+
 class Solution {
 public:
     TreeNode* convertBST(TreeNode* root) {
@@ -37,4 +40,35 @@ public:
 
 private:
     int sum = 0;
+};
+
+//Stack:
+
+class Solution {
+public:
+    TreeNode* convertBST(TreeNode* root) {
+        int sum = 0;
+        TreeNode* node = root;
+        stack<TreeNode*> stack;
+
+        while (!stack.empty() || node) {
+            /* push all nodes up to (and including) this subtree's maximum on
+             * the stack. */
+            while (node) {
+                stack.push(node);
+                node = node->right;
+            }
+
+            node = stack.top();
+            stack.pop();
+            sum += node->val;
+            node->val = sum;
+
+            /* all nodes with values between the current and its parent lie in
+             * the left subtree. */
+            node = node->left;
+        }
+
+        return root;
+    }
 };
