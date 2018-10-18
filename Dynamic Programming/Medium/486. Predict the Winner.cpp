@@ -62,6 +62,8 @@ private:
     }
 };
 
+// dp[i,j]=nums[i]−dp[i+1][j],nums[j]−dp[i][j−1]
+
 2-D DP:
 
 class Solution {
