@@ -61,12 +61,57 @@ public:
     }
 };
 
-This problem has a typical solution using Dynamic Programming. We define the state P[i][j] to be true if s[0..i) matches p[0..j) and false otherwise. Then the state equations are:
+/* 1, If p.charAt(j) == s.charAt(i) :  dp[i][j] = dp[i-1][j-1];
+ * 2, If p.charAt(j) == '.' : dp[i][j] = dp[i-1][j-1];
+ * 3, If p.charAt(j) == '*': 
+ *    here are two sub conditions:
+ *                1   if p.charAt(j-1) != s.charAt(i) : dp[i][j] = dp[i][j-2]  in this case, a* only counts as empty
+ *                2   if p.charAt(i-1) == s.charAt(i) or p.charAt(i-1) == '.':
+ *                               dp[i][j] = dp[i-1][j]    in this case, a* counts as multiple a 
+ *                            or dp[i][j] = dp[i][j-1]    in this case, a* counts as single a
+ *                            or dp[i][j] = dp[i][j-2]    in this case, a* counts as empty
+ */
 
-P[i][j] = P[i - 1][j - 1], if p[j - 1] != '*' && (s[i - 1] == p[j - 1] || p[j - 1] == '.');
-P[i][j] = P[i][j - 2], if p[j - 1] == '*' and the pattern repeats for 0 times;
-P[i][j] = P[i - 1][j] && (s[i - 1] == p[j - 2] || p[j - 2] == '.'), if p[j - 1] == '*' and the pattern repeats for at least 1 times.
-Putting these together, we will have the following code.
+class Solution {
+public:
+    bool isMatch(string s, string p) {
+        if (p.empty()) return s.empty();
+        int lens = s.size(), lenp = p.size();
+        vector<vector<bool>> dp(lens+1, vector<bool>(lenp+1, false));
+        dp[0][0] = true;
+        for (int i = 0; i < lenp; i++) {
+            if (p[i] == '*' && dp[0][i-1]) {
+                dp[0][i+1] = true;
+            }
+        }
+        for (int i = 0 ; i < lens; i++) {
+            for (int j = 0; j < lenp; j++) {
+                if (p[j] == '.') {
+                    dp[i+1][j+1] = dp[i][j];
+                }
+                if (p[j] == s[i]) {
+                    dp[i+1][j+1] = dp[i][j];
+                }
+                if (p[j] == '*') {
+                    if (p[j-1] != s[i] && p[j-1] != '.') {
+                        dp[i+1][j+1] = dp[i+1][j-1];
+                    } else {
+                        dp[i+1][j+1] = (dp[i+1][j] || dp[i][j+1] || dp[i+1][j-1]);
+                    }
+                }
+            }
+        }
+        return dp[lens][lenp];
+    }
+};
+
+/* This problem has a typical solution using Dynamic Programming. We define the state P[i][j] to be true if s[0..i) matches p[0..j) and false otherwise. Then the state equations are:
+ * 
+ * P[i][j] = P[i - 1][j - 1], if p[j - 1] != '*' && (s[i - 1] == p[j - 1] || p[j - 1] == '.');
+ * P[i][j] = P[i][j - 2], if p[j - 1] == '*' and the pattern repeats for 0 times;
+ * P[i][j] = P[i - 1][j] && (s[i - 1] == p[j - 2] || p[j - 2] == '.'), if p[j - 1] == '*' and the pattern repeats for at least 1 times.
+ * Putting these together, we will have the following code.
+ */
 
 class Solution {
 public:
