@@ -23,24 +23,23 @@ public:
         sort(nums.begin(), nums.end());
         int n = nums.size();
         for (int i = 0; i < n-2; i++) {
-            if (i == 0 || (i > 0 && nums[i] != nums[i-1])) {
-                int head = i+1, tail = n-1;
-                while (head < tail) {
-                    if (nums[head] + nums[tail] + nums[i] == 0) {
-                        res.push_back({nums[i],nums[head],nums[tail]});
-                        while (head < tail && nums[head] == nums[head+1]) head++;
-                        while (head < tail && nums[tail] == nums[tail-1]) tail--;
-                        head++; tail--;
-                    } else if (nums[head] + nums[tail] + nums[i] < 0) {
-                        head++;
-                    } else {
-                        tail--;
-                    }
+            if (i > 0 && nums[i] == nums[i-1]) continue;
+            if (nums[i]*3 > 0) break;
+            if (nums[i]+2*nums[n-1] < 0) continue;
+            int head = i+1, tail = n-1;
+            while (head < tail) {
+                if (nums[head] + nums[tail] + nums[i] == 0) {
+                    res.push_back({nums[i],nums[head],nums[tail]});
+                    while (head < tail && nums[head] == nums[head+1]) head++;
+                    while (head < tail && nums[tail] == nums[tail-1]) tail--;
+                    head++; tail--;
+                } else if (nums[head] + nums[tail] + nums[i] < 0) {
+                    head++;
+                } else {
+                    tail--;
                 }
             }
         }
-
         return res;
     }
- 
 };
